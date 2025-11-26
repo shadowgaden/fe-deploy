@@ -22,8 +22,8 @@ jobs:
       - name: Deploy to FTP server
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp://shadow.somee.com
+          server: shadow.somee.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist
-          server-dir: /www.shadow.somee.com
+          server-dir: /www.shadow.somee.com/
