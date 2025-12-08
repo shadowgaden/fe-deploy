@@ -1,4 +1,4 @@
-name: Deploy to SOMEE Hosting
+name: Deploy FE to SOMEE
 
 on:
   push:
@@ -6,39 +6,33 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # ----------------------------
-      # FRONTEND BUILD
-      # ----------------------------
-      - name: Build Frontend
-        working-directory: frontend
-        run: |
-          npm install
-          npm run build
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      # ----------------------------
-      # BACKEND BUILD
-      # ----------------------------
-      - name: Install Backend Dependencies
-        working-directory: backend
-        run: |
-          npm install
+      # CÀI FE
+      - name: Install dependencies
+        run: npm install
 
-      # ----------------------------
-      # DEPLOY TO SOMEE VIA FTP
-      # ----------------------------
-      - name: Deploy to SOMEE via FTP
+      # BUILD FE
+      - name: Build project
+        run: npm run build
+
+      # DEPLOY QUA FTP
+      - name: Deploy to SOMEE
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: 155.254.246.47
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /www.shadow.somee.com/
-          local-dir: ./
+          local-dir: ./build/
           dangerous-clean-slate: false
