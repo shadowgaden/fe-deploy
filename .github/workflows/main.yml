@@ -1,48 +1,44 @@
-name: Build and Deploy Frontend to somee (FTP)
+name: Deploy to SOMEE Hosting
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
+      - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Find frontend directory automatically
-        id: find_dir
+      # ----------------------------
+      # FRONTEND BUILD
+      # ----------------------------
+      - name: Build Frontend
+        working-directory: frontend
         run: |
-          FILE=$(find . -maxdepth 3 -name "package.json" | head -n 1)
-          if [ -z "$FILE" ]; then
-            echo "ERROR: No package.json found!"
-            exit 1
-          fi
-          DIR=$(dirname "$FILE")
-          echo "Found package.json in: $DIR"
-          echo "dir=$DIR" >> $GITHUB_OUTPUT
+          npm install
+          npm run build
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # ----------------------------
+      # BACKEND BUILD
+      # ----------------------------
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: |
+          npm install
+
+      # ----------------------------
+      # DEPLOY TO SOMEE VIA FTP
+      # ----------------------------
+      - name: Deploy to SOMEE via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: ${{ steps.find_dir.outputs.dir }}
-
-      - name: Build frontend
-        run: npm run build
-        working-directory: ${{ steps.find_dir.outputs.dir }}
-
-      - name: Deploy to FTP (somee)
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
-        with:
-          server: ${{ secrets.FTP_HOST }}
+          server: 155.254.246.47
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ${{ steps.find_dir.outputs.dir }}/dist
-          server-dir: /www.shadow.somee.com
-          dangerous-clean-slate: true
+          server-dir: /www.shadow.somee.com/
+          local-dir: ./
+          dangerous-clean-slate: false
