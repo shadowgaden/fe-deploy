@@ -29,6 +29,6 @@ jobs:
         server: ${{ secrets.FTP_HOST }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: frontend/build   # nếu bạn dùng Vite/Vue → đổi thành frontend/dist
+        local-dir: frontend/build
         server-dir: /www.shadow.somee.com
         dangerous-clean-slate: true
