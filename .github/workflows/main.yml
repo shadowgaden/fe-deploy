@@ -30,10 +30,10 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
-          # thư mục build sau khi chạy npm run build
+          # ĐÚNG: chỉ 1 dòng local-dir
           local-dir: frontend/dist
 
-          # Chỉ sửa duy nhất dòng này
+          # ĐÚNG: chỉ 1 dòng server-dir
           server-dir: /www.shadow.somee.com
 
           dangerous-clean-slate: true
