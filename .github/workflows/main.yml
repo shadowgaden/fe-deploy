@@ -9,26 +9,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout source code
-      uses: actions/checkout@v4
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-    - name: Install dependencies & Build frontend
-      working-directory: frontend
-      run: |
-        npm install
-        npm run build
+      - name: Install dependencies & Build frontend
+        working-directory: frontend
+        run: |
+          npm install
+          npm run build
 
-    - name: Deploy to FTP (somee)
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
-      with:
-        server: ${{ secrets.FTP_HOST }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: frontend/dist
-        server-dir: /www.shadow.somee.com
-        dangerous-clean-slate: true
+      - name: Deploy to FTP (somee)
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: frontend/dist
+          server-dir: /www.shadow.somee.com/
+          dangerous-clean-slate: true
