@@ -29,7 +29,11 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
+
+          # thư mục build sau khi chạy npm run build
           local-dir: frontend/dist
-          server-dir: /www.shadow.somee.com/
+
+          # Chỉ sửa duy nhất dòng này
+          server-dir: /www.shadow.somee.com
+
           dangerous-clean-slate: true
