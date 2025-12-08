@@ -1,29 +1,34 @@
-name: Deploy FE to FTP
+name: Build and Deploy Frontend to somee (FTP)
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]   # hoặc branch bạn muốn deploy
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm install
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
 
-      - name: Build Front-End
-        run: npm run build
+    - name: Install dependencies & build frontend
+      working-directory: frontend
+      run: |
+        npm ci
+        npm run build
 
-      - name: Deploy to FTP server
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: shadow.somee.com
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist
-          server-dir: /www.shadow.somee.com/
+    - name: Deploy to FTP (somee)
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ${{ secrets.FTP_HOST }}        # e.g. shadow.somee.com or 155.254.246.47
+        username: ${{ secrets.FTP_USERNAME }}  # 'shadow'
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: frontend/build              # thư mục chứa file tĩnh
+        server-dir: /www.shadow.somee.com      # remote path
+        # optional: exclude / include if needed
