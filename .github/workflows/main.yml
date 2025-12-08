@@ -18,15 +18,14 @@ jobs:
         with:
           node-version: 20
 
-      # CÀI FE
       - name: Install dependencies
         run: npm install
+        working-directory: ./fe
 
-      # BUILD FE
       - name: Build project
         run: npm run build
+        working-directory: ./fe
 
-      # DEPLOY QUA FTP
       - name: Deploy to SOMEE
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -34,5 +33,5 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /www.shadow.somee.com/
-          local-dir: ./build/
+          local-dir: ./fe/build/
           dangerous-clean-slate: false
