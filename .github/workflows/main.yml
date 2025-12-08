@@ -18,7 +18,6 @@ jobs:
           node-version: 18
 
       - name: Install dependencies & Build frontend
-        working-directory: frontend
         run: |
           npm install
           npm run build
@@ -30,8 +29,10 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
-          local-dir: frontend/dist
+          # thư mục build tạo ra sau khi chạy npm run build
+          local-dir: dist
 
+          # thư mục trên somee
           server-dir: /www.shadow.somee.com
 
           dangerous-clean-slate: true
