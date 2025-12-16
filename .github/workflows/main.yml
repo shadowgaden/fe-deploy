@@ -1,4 +1,4 @@
-name: Deploy FE to SOMEE
+name: Deploy React Frontend to Somee
 
 on:
   push:
@@ -6,35 +6,42 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
-      # CÀI FE
       - name: Install dependencies
         run: npm install
-        working-directory: ./fe
 
-      # BUILD FE
-      - name: Build project
+      - name: Build React
         run: npm run build
-        working-directory: ./fe
 
-      # DEPLOY QUA FTP
-      - name: Deploy to SOMEE
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Add web.config for IIS
+        run: |
+          echo '<?xml version="1.0" encoding="utf-8"?>' > dist/web.config
+          echo '<configuration><system.webServer><rewrite><rules>' >> dist/web.config
+          echo '<rule name="React Routes" stopProcessing="true">' >> dist/web.config
+          echo '<match url=".*" />' >> dist/web.config
+          echo '<conditions logicalGrouping="MatchAll">' >> dist/web.config
+          echo '<add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />' >> dist/web.config
+          echo '<add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />' >> dist/web.config
+          echo '</conditions>' >> dist/web.config
+          echo '<action type="Rewrite" url="/index.html" />' >> dist/web.config
+          echo '</rule></rules></rewrite></system.webServer></configuration>' >> dist/web.config
+
+      - name: Deploy to Somee via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
         with:
-          server: 155.254.246.47
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: dist/
           server-dir: /www.shadow.somee.com/
-          local-dir: ./fe/build/
-          dangerous-clean-slate: false
