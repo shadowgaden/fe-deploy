@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -21,27 +21,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build React
+      - name: Build project
         run: npm run build
 
-      - name: Add web.config for IIS
-        run: |
-          echo '<?xml version="1.0" encoding="utf-8"?>' > dist/web.config
-          echo '<configuration><system.webServer><rewrite><rules>' >> dist/web.config
-          echo '<rule name="React Routes" stopProcessing="true">' >> dist/web.config
-          echo '<match url=".*" />' >> dist/web.config
-          echo '<conditions logicalGrouping="MatchAll">' >> dist/web.config
-          echo '<add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />' >> dist/web.config
-          echo '<add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />' >> dist/web.config
-          echo '</conditions>' >> dist/web.config
-          echo '<action type="Rewrite" url="/index.html" />' >> dist/web.config
-          echo '</rule></rules></rewrite></system.webServer></configuration>' >> dist/web.config
-
       - name: Deploy to Somee via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_FE_HOST }}
           username: ${{ secrets.FTP_FE_USER }}
           password: ${{ secrets.FTP_FE_PASSWORD }}
           local-dir: dist/
-          server-dir: /www.shadow.somee.com/
+          server-dir: www.shadow.somee.com/
