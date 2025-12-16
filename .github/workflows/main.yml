@@ -38,7 +38,7 @@ jobs:
           echo '</rule></rules></rewrite></system.webServer></configuration>' >> dist/web.config
 
       - name: Deploy to Somee via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
