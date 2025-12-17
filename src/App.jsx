@@ -1,12 +1,16 @@
 function App() {
-
   const callApi = async () => {
     try {
       const res = await fetch("https://backend-api-cmxm.onrender.com/");
+
+      if (!res.ok) {
+        throw new Error("HTTP error " + res.status);
+      }
+
       const data = await res.json();
-      alert(data.message);
+      alert(data.message || "Backend API is running");
     } catch (err) {
-      alert("Không gọi được backend");
+      alert("Không gọi được backend (API không phản hồi JSON)");
       console.error(err);
     }
   };
